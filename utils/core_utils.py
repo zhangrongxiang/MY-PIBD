@@ -495,7 +495,7 @@ def _calculate_metrics(loader, dataset_factory, survival_train, all_risk_scores,
     return c_index, c_index_ipcw, BS, IBS, iauc
 
 
-def _summary(dataset_factory, model, omics_format, loader, loss_fn, survival_train=None):
+def _summary(dataset_factory, model, omics_format, loader, loss_fn, survival_train=None,miss=None):
     r"""
     Run a validation loop on the trained model 
     
@@ -537,6 +537,11 @@ def _summary(dataset_factory, model, omics_format, loader, loss_fn, survival_tra
         for data in loader:
 
             data_WSI, mask, y_disc, event_time, censor, data_omics, clinical_data_list, mask = _unpack_data(omics_format, device, data)
+
+            if miss=="P":
+                data_WSI = torch.zeros_like(data_WSI).to(device)
+            if miss=="G":
+                data_omics = torch.zeros_like(data_omics).to(device)
 
             input_args = {"x_wsi": data_WSI.to(device)}
             input_args["return_attn"] = False
@@ -640,7 +645,7 @@ def _step(cur, args, loss_fn, model, optimizer, train_loader, val_loader, log_fi
     for epoch in range(args.max_epochs):
         _train_loop_survival(args, epoch, model, args.omics_format, train_loader, optimizer, loss_fn, log_file)
         results_dict, val_cindex, val_cindex_ipcw, val_BS, val_IBS, val_iauc, total_loss = _summary(args.dataset_factory,
-        model, args.omics_format, val_loader, loss_fn, all_survival)
+        model, args.omics_format, val_loader, loss_fn, all_survival,args.miss)
         print(
             'Epoch:{} Val c-index: {:.4f} | Final Val c-index2: {:.4f} | Final Val IBS: {:.4f} | Final Val iauc: {:.4f}'.format(
                 epoch,

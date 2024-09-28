@@ -15,6 +15,7 @@ def _process_args():
     parser = argparse.ArgumentParser(description='Configurations for SurvPath Survival Prediction Training')
 
     #---> study related
+    parser.add_argument('--miss', type=str, default=None, help='missing modality')
     parser.add_argument('--study', type=str, default='tcga_stad',help='study name')
     parser.add_argument('--task', type=str, choices=['survival'],default='survival', help='task name')
     parser.add_argument('--n_classes', type=int, default=4, help='number of classes (4 bins for survival)')
