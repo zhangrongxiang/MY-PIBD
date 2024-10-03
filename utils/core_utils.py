@@ -541,7 +541,6 @@ def _summary(dataset_factory, model, omics_format, loader, loss_fn, survival_tra
             if miss=="P":
                 data_WSI = torch.zeros_like(data_WSI).to(device)
             if miss=="G":
-                data_omics = torch.zeros_like(data_omics).to(device)
                 if isinstance(data_omics, list):
                     # 如果 data_omics 是 list，则需要逐个 tensor 处理
                     data_omics = [torch.zeros_like(omic).to(device) for omic in data_omics]
